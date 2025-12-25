@@ -36,3 +36,4 @@ async def remove_bg(file: UploadFile = File(...)):
 
     return Response(content=output_image, media_type="image/png")
 
+
