@@ -18,6 +18,15 @@ async def remove_bg(file: UploadFile = File(...)):
     return Response(content=output_data, media_type="image/png")
 
 if __name__ == "__main__":
-    # Render ka dynamic port detect karne ke liye ye lines zaroori hain
+    # Render ka port detect karne ke liye ye lines sabse zaroori hain
+    port = int(os.environ.get("PORT", 10000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
+import os
+import uvicorn
+
+# ... aapka baki code ...
+
+if __name__ == "__main__":
+    # Ye line Render ke dynamically assigned port ko uthayegi
     port = int(os.environ.get("PORT", 10000))
     uvicorn.run(app, host="0.0.0.0", port=port)
