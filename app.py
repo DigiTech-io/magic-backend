@@ -1,40 +1,23 @@
-from fastapi import FastAPI, UploadFile, File
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import Response
 from rembg import remove
-from PIL import Image
-import io
+import uvicorn
+import os
 
 app = FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 @app.get("/")
 def home():
-    return {"message": "Magic Toolbox Backend is READY!"}
+    return {"message": "Image Remover API is running!"}
 
 @app.post("/remove-bg")
 async def remove_bg(file: UploadFile = File(...)):
-    input_data = await file.read()
-    img = Image.open(io.BytesIO(input_data))
+    image_data = await file.read()
+    # Background remove karne ka main function
+    output_data = remove(image_data)
+    return Response(content=output_data, media_type="image/png")
 
-    # इमेज को छोटा करना ताकि सर्वर क्रैश न हो
-    max_size = 800
-    if img.width > max_size:
-        ratio = max_size / float(img.width)
-        new_height = int(float(img.height) * float(ratio))
-        img = img.resize((max_size, new_height), Image.LANCZOS)
-
-    img_byte_arr = io.BytesIO()
-    img.save(img_byte_arr, format='PNG')
-    output_image = remove(img_byte_arr.getvalue())
-
-    return Response(content=output_image, media_type="image/png")
-
-
-
+if __name__ == "__main__":
+    # Render ka port detect karne ke liye ye lines sabse zaroori hain
+    port = int(os.environ.get("PORT", 10000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
