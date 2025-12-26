@@ -3,4 +3,4 @@ uvicorn
 rembg
 python-multipart
 Pillow
-
+gunicorn
